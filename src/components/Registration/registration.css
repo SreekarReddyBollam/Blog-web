@@ -1,0 +1,9 @@
+.container {
+    display: flex;
+    width: 50%;
+    margin: 10px auto 0;
+    flex-direction: column;
+}
+div.container >  *{
+    margin-top: 15px;
+}

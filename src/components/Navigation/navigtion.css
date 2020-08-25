@@ -1,0 +1,10 @@
+#button-signup,#button-login,#button-profile,#button-posts,#button-feed{
+    color: white;
+}
+a{
+    text-decoration: none;
+}
+.MuiToolbar-root{
+    display: flex;
+    flex-direction: row-reverse;
+}

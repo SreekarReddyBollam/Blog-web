@@ -1,0 +1,16 @@
+.hero{
+    padding: 5em;
+}
+.posts{
+    display: flex;
+    flex-direction: row;
+}
+.posts > * {
+    margin-left: 15px;
+}
+.heading{
+    display: flex;
+    flex-direction: row;
+   justify-content: space-between;
+    margin-bottom: 1em;
+}
