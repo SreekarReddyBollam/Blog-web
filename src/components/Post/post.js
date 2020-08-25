@@ -1,8 +1,8 @@
 import React from "react";
-import PostService from "../../services/postService";
 import {Link, withRouter} from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import AuthService from "../../services/authService";
+import {authService} from "../../services/authService";
+import {postService} from "../../services/postService";
 
 class Post extends React.Component {
 
@@ -10,13 +10,11 @@ class Post extends React.Component {
     constructor(props) {
         super(props);
         this.state = {post: null, loading: true};
-        this.postService = new PostService();
-        this.authService = new AuthService();
         this.params = this.props.match.params;
     }
 
     componentDidMount() {
-        this.postService
+        postService
             .getPost(this.params.userId, this.params.postId)
             .then(data => {
                 this.setState({post: data, loading: false})
@@ -44,17 +42,18 @@ class Post extends React.Component {
                 </li>
                 <li><b>Last Updated: </b> {this.state.post.updatedAt}</li>
             </ul>
-            { this.canEdit() &&
-                <Link to={`/users/${this.state.post.userId}/posts/${this.state.post.id}/edit`}>
-                    <Button variant="contained"> Edit</Button>
-                </Link>
+            {this.canEdit() &&
+            <Link to={`/users/${this.state.post.userId}/posts/${this.state.post.id}/edit`}>
+                <Button variant="contained"> Edit</Button>
+            </Link>
             }
         </div> : '';
         return (rendered)
 
     }
-    canEdit(){
-        return this.authService.currentUser() && (this.authService.currentUser().id === this.state.post.userId);
+
+    canEdit() {
+        return authService.currentUser() && (authService.currentUser().id === this.state.post.userId);
     }
 }
 

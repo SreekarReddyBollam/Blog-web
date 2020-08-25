@@ -7,17 +7,16 @@ import './navigtion.css';
 import Registration from "../Registration/registration";
 import Post from "../Post/post";
 import Home from "../Home/home";
-import AuthService from "../../services/authService";
+import {authService} from "../../services/authService";
 
 class Navigation extends React.Component {
     logoutButton = <Link to="/logout"><Button id="button-signup">Logout</Button></Link>;
     signUpButton = <Link to="/signup"><Button id="button-signup">SignUp</Button></Link>;
     loginButton = <Link to="/login"><Button id="button-login">Login</Button></Link>;
     allPosts = <Link to="/"><Button id="button-posts">All Posts</Button></Link>;
-    authService = new AuthService();
 
-    isLoggedIn = this.authService.userLoggedIn;
-    user = this.authService.currentUser;
+    isLoggedIn = authService.userLoggedIn;
+    user = authService.currentUser;
 
     render() {
         if (this.isLoggedIn()) {
@@ -44,8 +43,8 @@ class Navigation extends React.Component {
                 <Route path="/login" exact component={() => <Registration mode='login'/>}/>
                 <Route path="/signup" exact component={() => <Registration mode='signUp'/>}/>
                 <Route path="/logout" exact component={() => {
-                    new AuthService().logout();
-                   return <Redirect to="/" />
+                    authService.logout();
+                    return <Redirect to="/"/>
                 }}/>
 
                 <Route path="/users/:userId" exact component={Home}/>
@@ -61,4 +60,5 @@ class Navigation extends React.Component {
         )
     }
 }
+
 export default withRouter(Navigation);

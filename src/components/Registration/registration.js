@@ -10,16 +10,14 @@ import IconButton from "@material-ui/core/IconButton";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Button from "@material-ui/core/Button";
-import AuthService from "../../services/authService";
 import {
     useHistory
 } from "react-router-dom";
-import UserService from "../../services/userService";
+import {authService} from "../../services/authService";
+import {userService} from "../../services/userService";
 
 
 export default function Registration(props) {
-    const authService = new AuthService();
-    const userService = new UserService();
     const history = useHistory();
     const passwordValidationHelperText = "Password must be of at-least 8 characters with one special character and a number";
     const confirmPasswordMatch = "Passwords doesn't match";
@@ -156,7 +154,7 @@ export default function Registration(props) {
             })
         }
         else{
-            sessionStorage['user'] = JSON.stringify(response.user);
+            document.cookie = `user=${JSON.stringify(response.user)};max-age=3600`;
             history.push("/");
         }
     }

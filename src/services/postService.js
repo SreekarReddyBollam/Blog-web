@@ -1,9 +1,9 @@
 import UrlBuilder from "./urlBuilder";
-import AuthService from "./authService";
+import {authService} from "./authService";
 
-export default class PostService {
 
-    authService = new AuthService();
+class PostService {
+
 
     async getPost(userId, postId) {
         const _url = new UrlBuilder()
@@ -49,9 +49,11 @@ export default class PostService {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `HS256 ${sessionStorage['token']}`
+                'Authorization': `HS256 ${authService.token()}`
             }
         })
         return await response.json();
     }
 }
+
+export const postService = new PostService();

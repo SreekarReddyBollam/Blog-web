@@ -1,13 +1,10 @@
 import React from "react";
 import PostCard from "../PostCard/postCard";
 import './home.css'
-import PostService from "../../services/postService";
 import {withRouter} from "react-router-dom";
-import AuthService from "../../services/authService";
+import {postService} from "../../services/postService";
 
 class Home extends React.Component {
-    postService = new PostService();
-    authService = new AuthService();
 
     constructor(props) {
         super(props);
@@ -16,7 +13,7 @@ class Home extends React.Component {
 
     componentDidMount() {
         const params = this.props.match.params;
-        this.postService
+        postService
             .getPosts(params.userId)
             .then(data => {
                 this.setState({posts: data})

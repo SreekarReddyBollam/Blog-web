@@ -1,12 +1,11 @@
 import UrlBuilder from "./urlBuilder";
-import AuthService from "./authService";
+import {authService} from "./authService";
 
-export default class UserService {
-    authService = new AuthService();
+class UserService {
 
     async editProfile(user) {
 
-        const _url = new UrlBuilder().addUsers(this.authService.currentUser().id).build();
+        const _url = new UrlBuilder().addUsers(authService.currentUser().id).build();
         return await this.requestServer(user, _url, 'PUT');
     }
 
@@ -22,7 +21,7 @@ export default class UserService {
                 body: data ? JSON.stringify(data) : '',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': this.authService.userLoggedIn() ? `HS256 ${this.authService.token()}` : ''
+                    'Authorization': authService.userLoggedIn() ? `HS256 ${authService.token()}` : ''
                 }
             })
             return await response.json();
@@ -31,3 +30,6 @@ export default class UserService {
         }
     }
 }
+
+export const  userService = new UserService();
+

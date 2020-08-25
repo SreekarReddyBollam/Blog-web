@@ -1,25 +1,25 @@
 import UrlBuilder from "./urlBuilder";
-
-export default class AuthService {
+class AuthService {
     async login(user) {
         const _url = new UrlBuilder().forLogin().build();
         return await this.requestServer(user, _url);
     }
 
     logout = () => {
-        sessionStorage.clear()
+        document.cookie = 'token=ANY;max-age=0';
+        document.cookie = 'user=ANY;max-age=0';
     }
 
     userLoggedIn = () => {
-        return !!sessionStorage['token'];
+        return !!this.token();
     }
 
     token = () => {
-        return sessionStorage['token'];
+        return retrieveCookie('token');
     }
 
     currentUser = () => {
-        return this.userLoggedIn() ? JSON.parse(sessionStorage['user']) : null;
+        return this.userLoggedIn() ? JSON.parse(retrieveCookie('user')): null;
     }
 
     async signUp(user) {
@@ -34,19 +34,36 @@ export default class AuthService {
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `HS256 ${sessionStorage['token']}`
+                'Authorization': `HS256 ${this.token()}`
             }
         })
         const body = await response.json();
         if (!!body.meta && body.meta['token']) {
-            sessionStorage['token'] = body.meta['token'];
-            sessionStorage['user'] = JSON.stringify(body['user']);
+            document.cookie = `token=${body.meta['token']};max-age=3600`;
+            document.cookie = `user=${JSON.stringify(body['user'])};max-age=3600`;
         }
         return body;
     }
 
 }
 
+export const authService = new AuthService();
+
+export function retrieveCookie(name) {
+    let cookies = document.cookie.split("; ");
+    let keyValue = cookies.filter(cookie => cookie.split('=')[0] === name);
+    let cookie = '';
+    if(keyValue.length===1){
+        keyValue = keyValue[0];
+        if(keyValue.split("=").length>2){
+            cookie = keyValue.split("=").splice(1,).join();
+        }
+        else
+            cookie = keyValue.split("=")[1];
+    }
+
+    return cookie;
+}
 
 export function formatConversion(object) {
     let result = {};
