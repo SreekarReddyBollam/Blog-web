@@ -45,7 +45,7 @@ class Post extends React.Component {
                 <li><b>Last Updated: </b> {this.state.post.updatedAt}</li>
             </ul>
             { this.canEdit() &&
-                <Link to={`/users/${this.state.post.userId}/posts/${this.state.postId}/edit`}>
+                <Link to={`/users/${this.state.post.userId}/posts/${this.state.post.id}/edit`}>
                     <Button variant="contained"> Edit</Button>
                 </Link>
             }

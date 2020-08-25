@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Button from "@material-ui/core/Button";
-import AuthService, {camelToSnakeCase, formatConversion} from "../../services/authService";
+import AuthService from "../../services/authService";
 import {
     useHistory
 } from "react-router-dom";
@@ -19,6 +19,7 @@ import UserService from "../../services/userService";
 
 export default function Registration(props) {
     const authService = new AuthService();
+    const userService = new UserService();
     const history = useHistory();
     const passwordValidationHelperText = "Password must be of at-least 8 characters with one special character and a number";
     const confirmPasswordMatch = "Passwords doesn't match";
@@ -142,7 +143,7 @@ export default function Registration(props) {
     }
 
     async function handleEdit(){
-        const response = await new UserService().editProfile({
+        const response = await userService.editProfile({
             'first_name':values.firstName,
             'bio':values.bio,
             'last_name':values.lastName,
@@ -155,10 +156,24 @@ export default function Registration(props) {
             })
         }
         else{
-            sessionStorage['user'] = JSON.stringify(formatConversion(response.user,camelToSnakeCase));
+            sessionStorage['user'] = JSON.stringify(response.user);
+            history.push("/");
         }
     }
 
+    async function handleDelete() {
+        const response = await userService.deleteUser(authService.currentUser().id)
+        if (response.error) {
+            setValidations({
+                ...validations,
+                errors: JSON.stringify(response.error)
+            })
+        }
+        else{
+            authService.logout();
+            history.push("/");
+        }
+    }
 
     const username = <TextField id="username" label="Username" variant="outlined" value={values.username}
                                 error={validations.isEmptyUsername}
@@ -246,10 +261,13 @@ export default function Registration(props) {
 
     const editProfileButton = <Button variant="contained" onClick={handleEdit}>Edit Profile</Button>
 
+
+    const deleteUserButton = <Button variant="contained" onClick={handleDelete} color="secondary">Delete User</Button>
+
     let rendered = [username, password, loginButton];
 
     if (props.mode === 'edit') {
-        rendered = [firstName, lastName, profilePic, bio, editProfileButton];
+        rendered = [firstName, lastName, profilePic, bio, editProfileButton, deleteUserButton];
     } else if (props.mode === 'signUp') {
         rendered = [username, password, confirmPassword, firstName, lastName, profilePic, bio, registerButton];
     }

@@ -10,14 +10,19 @@ export default class UserService {
         return await this.requestServer(user, _url, 'PUT');
     }
 
-    async requestServer(data, _url, method) {
+    async deleteUser(id) {
+        const _url = new UrlBuilder().addUsers(id).build();
+        return await this.requestServer(null,_url, 'DELETE');
+    }
+
+    async requestServer(data = null, _url, method) {
         try {
             const response = await fetch(_url, {
                 method: method,
-                body: JSON.stringify(data),
+                body: data ? JSON.stringify(data) : '',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': this.authService.userLoggedIn()?`HS256 ${this.authService.token()}`:''
+                    'Authorization': this.authService.userLoggedIn() ? `HS256 ${this.authService.token()}` : ''
                 }
             })
             return await response.json();
