@@ -42,7 +42,7 @@ class Home extends React.Component {
 
     render() {
         const posts = this.state.posts.map(element => <PostCard post={element} user_id={element.userId}/>);
-        return (posts.length > 0 &&
+        return (posts.length > 0 ?
                     <div className="hero">
                         <div className="heading">
                             <h2>{`Posts by ${this.getUsername()}`}</h2>
@@ -55,7 +55,7 @@ class Home extends React.Component {
                         <div className="posts">
                             {posts}
                         </div>
-                    </div>
+                    </div>: <h2>No posts yet.</h2>
 
         )
     }
@@ -63,7 +63,7 @@ class Home extends React.Component {
     getUsername() {
         let pathName = this.props.location.pathname;
         if(pathName==="/")
-            return "All";
+            return "All Bloggers";
         return this.state.posts[0].createdBy;
     }
 
