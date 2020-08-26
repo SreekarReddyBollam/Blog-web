@@ -1,7 +1,6 @@
 import UrlBuilder from "./urlBuilder";
 import {authService, camelToSnakeCase, formatConversion} from "./authService";
 
-
 class PostService {
 
 
@@ -46,8 +45,7 @@ class PostService {
 
     async deletePost(userId,postId){
         const _url = new UrlBuilder().addUsers(userId).addPosts(postId).build();
-        const response = await this.requestServer(_url, 'DELETE');
-        return response;
+        return await this.requestServer(_url, 'DELETE');
     }
 
     async requestServer(_url, method, body) {
@@ -62,6 +60,9 @@ class PostService {
             options['body'] =JSON.stringify(formatConversion(body,camelToSnakeCase));
 
         const response = await fetch(_url,options)
+        if(!response.ok){
+            throw new Error("404 page Server might be down");
+        }
         return await response.json();
     }
 }

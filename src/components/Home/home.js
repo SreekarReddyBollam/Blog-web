@@ -29,14 +29,14 @@ class Home extends React.Component {
     }
 
     requestForPosts(userId){
-        postService
-            .getPosts(userId)
-            .then(data => {
-                this.setState({posts: data})
-                if (this.state.posts.error) {
-                    // TODO route to 404 page
-                }
+        postService.getPosts(userId).then(data=>{
+            this.setState({
+                posts:data
             });
+        }).catch(err=>{
+            // TODO -- go to 404
+        })
+
     }
 
 

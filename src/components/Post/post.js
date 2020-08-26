@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import {authService} from "../../services/authService";
 import {postService} from "../../services/postService";
 import './post.css'
+import {goTo404} from "../Navigation/navigation";
 
 class Post extends React.Component {
 
@@ -19,21 +20,15 @@ class Post extends React.Component {
             .getPost(this.params.userId, this.params.postId)
             .then(data => {
                 this.setState({post: data, loading: false})
-                console.log(this.state.post);
-                if (this.state.post.error) {
-                    // TODO route to 404 page
-                }
             })
     }
 
-    handleDelete = async () =>{
-       const response =  await postService.deletePost(this.params.userId,this.params.postId);
-       if(response.error){
-           // TODO route to 404 page
-       }
-       else{
-           this.props.history.push(`/users/${this.params.userId}`);
-       }
+    handleDelete =  () =>{
+      postService.deletePost(this.params.userId,this.params.postId).then(data=>{
+          this.props.history.push(`/users/${this.params.userId}`);
+      }).catch(err=>{
+          goTo404();
+      })
     };
 
     render() {

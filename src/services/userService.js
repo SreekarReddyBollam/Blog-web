@@ -11,25 +11,24 @@ class UserService {
 
     async deleteUser(id) {
         const _url = new UrlBuilder().addUsers(id).build();
-        return await this.requestServer(null,_url, 'DELETE');
+        return await this.requestServer(null, _url, 'DELETE');
     }
 
     async requestServer(data = null, _url, method) {
-        try {
-            const response = await fetch(_url, {
-                method: method,
-                body: data ? JSON.stringify(data) : '',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': authService.userLoggedIn() ? `HS256 ${authService.token()}` : ''
-                }
-            })
-            return await response.json();
-        } catch (err) {
-            return err.error;
+        const response = await fetch(_url, {
+            method: method,
+            body: data ? JSON.stringify(data) : '',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authService.userLoggedIn() ? `HS256 ${authService.token()}` : ''
+            }
+        })
+        if(!response.ok){
+            return new Error("404 Error server might be down");
         }
+        return await response.json();
     }
 }
 
-export const  userService = new UserService();
+export const userService = new UserService();
 

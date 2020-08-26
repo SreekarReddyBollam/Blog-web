@@ -9,6 +9,7 @@ import Post from "../Post/post";
 import Home from "../Home/home";
 import {authService} from "../../services/authService";
 import PostRegister from "../Post/postRegister";
+import FourOhFour from "../404/404";
 
 class Navigation extends React.Component {
     logoutButton = <Link to="/logout"><Button id="button-signup">Logout</Button></Link>;
@@ -48,6 +49,7 @@ class Navigation extends React.Component {
                         authService.logout();
                         return <Redirect to="/"/>
                     }}/>
+                    <Route path="/Oh404Page" exact component={FourOhFour}/>
 
                     <Route path="/users/:userId/posts/create" exact component={() => <PostRegister mode='create'/>}/>
 
@@ -69,3 +71,10 @@ class Navigation extends React.Component {
 }
 
 export default withRouter(Navigation);
+
+
+export function goTo404() {
+    return (
+        <Redirect to="/Oh404Page"/>
+    )
+}

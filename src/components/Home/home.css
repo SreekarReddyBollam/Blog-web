@@ -2,11 +2,10 @@
     padding: 5em;
 }
 .posts{
+    width: 100%;
     display: flex;
     flex-direction: row;
-}
-.posts > * {
-    margin-left: 15px;
+    flex-wrap: wrap;
 }
 .heading{
     display: flex;

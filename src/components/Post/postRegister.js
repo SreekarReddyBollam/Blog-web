@@ -26,7 +26,7 @@ class PostRegister extends React.Component {
             isTitleValid: true
         })
         if (this.props.mode === 'edit')
-            this.requestForPost(params.userId,params.postId);
+            this.requestForPost(params.userId, params.postId);
     }
 
     componentDidUpdate(prevProps) {
@@ -37,7 +37,7 @@ class PostRegister extends React.Component {
     }
 
     requestForPost(userId, postId) {
-        postService.getPost(userId,postId).then(
+        postService.getPost(userId, postId).then(
             data => {
                 this.setState({
                     title: data.title,
@@ -53,38 +53,39 @@ class PostRegister extends React.Component {
             this.setState({
                 [inputName]: event.target.value,
             });
-            this.setState({
-                isTitleValid: this.state.title.trim() !==''
-            });
         }
     }
 
-    handlePublish = async () => {
+    handleOnChangeTitle = (event) => {
+        this.setState({
+            title: event.target.value,
+            isTitleValid: event.target.value.trim() !== ''
+        })
+    }
+
+    handlePublish =  () => {
         const params = this.props.match.params;
 
         if (this.props.mode === 'edit') {
-            const response = await postService.editPost(params.userId,params.postId, {
+            postService.editPost(params.userId, params.postId, {
                 title: this.state.title,
                 body: this.state.body,
                 imageUrl: this.state.imageUrl
+            }).then(data=>{
+                this.props.history.push(`/users/${params.userId}`);
+            }).catch(err=>{
+                // TODO - route to 404 page
             });
-            if (response && response.error) {
-                // TODO - route to 404 page
-            }
-            else
-                this.props.history.push(`/users/${params.userId}`);
-
         } else if (this.props.mode === 'create') {
-            const response = await postService.createPost(params.userId, {
+            postService.createPost(params.userId, {
                 title: this.state.title,
                 body: this.state.body,
                 imageUrl: this.state.imageUrl
-            })
-            if (response && response.error) {
-                // TODO - route to 404 page
-            }
-            else
+            }).then(data=>{
                 this.props.history.push(`/users/${params.userId}`);
+            }).catch(err=>{
+                // TODO - route to 404 page
+            });
         }
     }
 
@@ -93,7 +94,7 @@ class PostRegister extends React.Component {
         const textBoxTitle = <TextField id="title" label="Title" variant="outlined" value={this.state.title}
                                         helperText={!this.state.isTitleValid ? "Title is required" : ""}
                                         error={!this.state.isTitleValid}
-                                        required onChange={this.handleOnChange('title')}/>;
+                                        required onChange={this.handleOnChangeTitle}/>;
         const textBoxImageUrl = <TextField id="imageUrl" label="Image link" variant="outlined"
                                            value={this.state.imageUrl}
                                            helperText="insert link"
