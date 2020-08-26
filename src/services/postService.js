@@ -1,5 +1,5 @@
 import UrlBuilder from "./urlBuilder";
-import {authService} from "./authService";
+import {authService, camelToSnakeCase, formatConversion} from "./authService";
 
 
 class PostService {
@@ -29,29 +29,39 @@ class PostService {
         return response.posts;
     }
 
-    async editPost(userId, postId) {
+    async editPost(userId, postId, body) {
         const _url = new UrlBuilder()
             .addUsers(userId)
             .addPosts(postId)
             .build();
-        const response = await this.requestServer(_url, 'PUT');
+        const response = await this.requestServer(_url, 'PUT', body);
         return response.post;
     }
 
-    async createPost(userId) {
-        const _url = new UrlBuilder().addUsers(userId).addPosts();
-        const response = await this.requestServer(_url, 'POST');
+    async createPost(userId,body) {
+        const _url = new UrlBuilder().addUsers(userId).addPosts().build();
+        const response = await this.requestServer(_url, 'POST',body);
         return response.post;
     }
 
-    async requestServer(_url, method) {
-        const response = await fetch(_url, {
+    async deletePost(userId,postId){
+        const _url = new UrlBuilder().addUsers(userId).addPosts(postId).build();
+        const response = await this.requestServer(_url, 'DELETE');
+        return response;
+    }
+
+    async requestServer(_url, method, body) {
+        let options = {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `HS256 ${authService.token()}`
-            }
-        })
+            },
+        }
+        if(body)
+            options['body'] =JSON.stringify(formatConversion(body,camelToSnakeCase));
+
+        const response = await fetch(_url,options)
         return await response.json();
     }
 }

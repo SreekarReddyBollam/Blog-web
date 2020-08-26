@@ -3,6 +3,7 @@ import {Link, withRouter} from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import {authService} from "../../services/authService";
 import {postService} from "../../services/postService";
+import './post.css'
 
 class Post extends React.Component {
 
@@ -25,8 +26,18 @@ class Post extends React.Component {
             })
     }
 
+    handleDelete = async () =>{
+       const response =  await postService.deletePost(this.params.userId,this.params.postId);
+       if(response.error){
+           // TODO route to 404 page
+       }
+       else{
+           this.props.history.push(`/users/${this.params.userId}`);
+       }
+    };
+
     render() {
-        const rendered = !this.state.loading ? <div className="hero">
+        const rendered = !this.state.loading ? <div className="post-item">
             <h1>{this.state.post.title}</h1>
 
             <img src={this.state.post.imageUrl} alt={this.state.post.title} width="500" height="350"/>
@@ -34,7 +45,6 @@ class Post extends React.Component {
                 {this.state.post.body}
             </p>
             <ul>
-                <li><b>Like Count: </b> {this.state.post.likesCount}</li>
                 <li><b>Created by: </b>
                     <Link to={`/users/${this.state.post.userId}`}>
                         {this.state.post.createdBy}
@@ -46,6 +56,9 @@ class Post extends React.Component {
             <Link to={`/users/${this.state.post.userId}/posts/${this.state.post.id}/edit`}>
                 <Button variant="contained"> Edit</Button>
             </Link>
+            }
+            {this.canEdit() &&
+                <Button id="delete-button" variant="contained" color="secondary" onClick={this.handleDelete}>Delete Post</Button>
             }
         </div> : '';
         return (rendered)

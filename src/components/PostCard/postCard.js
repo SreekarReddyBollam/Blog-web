@@ -14,7 +14,7 @@ export default class PostCard extends React.Component {
         return (
 
             <Card className="card">
-                <CardActionArea>
+                <CardActionArea disabled>
                     <CardMedia
                         component="img"
                         alt={this.props.post.title}

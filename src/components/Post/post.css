@@ -1,4 +1,7 @@
-hero{
+.post-item{
     padding-left: 2em;
     margin:0 auto;
+}
+#delete-button{
+    margin-left: 1em;
 }
