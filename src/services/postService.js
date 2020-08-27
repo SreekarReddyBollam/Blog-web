@@ -51,6 +51,7 @@ class PostService {
     async requestServer(_url, method, body) {
         let options = {
             method: method,
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `HS256 ${authService.token()}`

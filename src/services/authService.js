@@ -1,4 +1,8 @@
 import UrlBuilder from "./urlBuilder";
+import * as Cookies from 'js-cookie';
+
+const jwtDecode = require('jwt-decode');
+
 
 class AuthService {
 
@@ -8,8 +12,9 @@ class AuthService {
     }
 
     logout = () => {
-        document.cookie = 'token=ANY;max-age=0;path=/';
-        document.cookie = 'user=ANY;max-age=0;path=/';
+        const _url = new UrlBuilder().addLogout().build();
+        Cookies.remove('token');
+        return this.requestServer(null, _url, 'GET');
     }
 
     userLoggedIn = () => {
@@ -17,15 +22,20 @@ class AuthService {
     }
 
     token = () => {
-        return retrieveCookie('token');
+        return Cookies.get('token');
     }
 
     currentUser = () => {
-        return this.userLoggedIn() ? JSON.parse(retrieveCookie('user')) : null;
+        let user;
+        if (this.userLoggedIn()) {
+            const jwt = this.token();
+            user = jwtDecode(jwt);
+        }
+        return user;
     }
 
     signUp(user) {
-        user = formatConversion(user,camelToSnakeCase);
+        user = formatConversion(user, camelToSnakeCase);
         const _url = new UrlBuilder().forSignUp().build();
         return this.requestServer(user, _url)
     }
@@ -33,17 +43,17 @@ class AuthService {
     async requestServer(data, _url, method = 'POST') {
         let options = {
             method: method,
-            body: JSON.stringify(data),
+            credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             }
         }
-        if(this.userLoggedIn())
-                 options.headers['Authorization'] = `HS256 ${this.token()}`;
+        if(method!=='GET')
+            options.body =  JSON.stringify(data)
 
-        const response = await fetch(_url,options)
+        const response = await fetch(_url, options)
 
-        if(!response.ok){
+        if (!response.ok) {
             const body = await response.json();
             throw new Error(JSON.stringify(body.error))
         }
@@ -51,8 +61,7 @@ class AuthService {
         const body = await response.json();
 
         if (!!body.meta && body.meta['token']) {
-            document.cookie = `token=${body.meta['token']};max-age=3600;path=/`;
-            document.cookie = `user=${JSON.stringify(body['user'])};max-age=3600;path=/`;
+            sessionStorage['user'] = JSON.stringify(body['user']);
         }
         return body;
     }
@@ -61,20 +70,6 @@ class AuthService {
 
 export const authService = new AuthService();
 
-export function retrieveCookie(name) {
-    let cookies = document.cookie.split("; ");
-    let keyValue = cookies.filter(cookie => cookie.split('=')[0] === name);
-    let cookie = '';
-    if (keyValue.length === 1) {
-        keyValue = keyValue[0];
-        if (keyValue.split("=").length > 2) {
-            cookie = keyValue.split("=").splice(1,).join();
-        } else
-            cookie = keyValue.split("=")[1];
-    }
-
-    return cookie;
-}
 
 export function formatConversion(object) {
     let result = {};

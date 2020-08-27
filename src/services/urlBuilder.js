@@ -32,4 +32,8 @@ export default class UrlBuilder {
         return this;
     }
 
+    addLogout() {
+        this.url += '/logout';
+        return this;
+    }
 }

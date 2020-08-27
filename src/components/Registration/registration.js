@@ -34,20 +34,18 @@ class Registration extends React.Component {
         this.isEmptyLastName = false;
 
         const user = authService.currentUser()
-
-        if (this.props.mode === 'edit') {
-            this.setState({
-                bio: user.bio,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                profilePic: user.profilePic,
-                password: '',
-                username: '',
-                errors: '',
-                showPassword: false
+        this.setState(this.getStateObject());
+        if (this.props.mode === 'edit' && authService.currentUser()) {
+            userService.getUser(user.id).then(user=>{
+                this.setState({
+                    bio: user.bio ? user.bio : '',
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    profilePic: user.profilePic ? user.profilePic : '',
+                })
+            }).catch(err=>{
+                // TODO - route to 404 page
             })
-        } else {
-            this.setState(this.getStateObject());
         }
     }
 
@@ -79,7 +77,7 @@ class Registration extends React.Component {
 
     handleRegister = () => {
         authService.signUp({
-            username:this.state.username,
+            username: this.state.username,
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             profilePic: this.state.profilePic,
@@ -116,16 +114,15 @@ class Registration extends React.Component {
             'last_name': this.state.lastName,
             'profile_pic': this.state.profilePic
         }).then(body => {
-            document.cookie = `user=${JSON.stringify(body.user)};max-age=3600;path=/`;
+            sessionStorage['user'] = JSON.stringify(body.user);
             this.props.history.push("/");
         }).catch(err => {
-           // TODO - go to 404 page
+            // TODO - go to 404 page
         })
     }
 
     handleDelete = () => {
         userService.deleteUser(authService.currentUser().id).then(body => {
-            authService.logout();
             this.props.history.push("/");
         }).catch(err => {
             // TODO - go to 404 page

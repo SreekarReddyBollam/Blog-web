@@ -16,7 +16,6 @@ import IconButton from "@material-ui/core/IconButton";
 import {AccountCircle} from "@material-ui/icons";
 
 class Navigation extends React.Component {
-    logoutButton = <Link to="/logout"><Button id="button-signup">Logout</Button></Link>;
     signUpButton = <Link to="/signup"><Button id="button-signup">SignUp</Button></Link>;
     loginButton = <Link to="/login"><Button id="button-login">Login</Button></Link>;
     allPosts = <Link to="/"><Button id="button-posts">All Posts</Button></Link>;
