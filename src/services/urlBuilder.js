@@ -36,4 +36,10 @@ export default class UrlBuilder {
         this.url += '/logout';
         return this;
     }
+
+    addLikeStatus(statusLike){
+
+       this.url += `/${statusLike?'like':'unlike'}`;
+       return this;
+    }
 }

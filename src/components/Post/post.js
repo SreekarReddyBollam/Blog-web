@@ -5,13 +5,17 @@ import {authService} from "../../services/authService";
 import {postService} from "../../services/postService";
 import './post.css'
 import {goTo404} from "../Navigation/navigation";
+import IconButton from "@material-ui/core/IconButton";
+import FavoriteBorderSharpIcon from '@material-ui/icons/FavoriteBorderSharp';
+import FavoriteSharpIcon from '@material-ui/icons/FavoriteSharp';
+
 
 class Post extends React.Component {
 
 
     constructor(props) {
         super(props);
-        this.state = {post: null, loading: true};
+        this.state = {post: null, loading: true, like: false, likesCount: 0};
         this.params = this.props.match.params;
     }
 
@@ -19,17 +23,34 @@ class Post extends React.Component {
         postService
             .getPost(this.params.userId, this.params.postId)
             .then(data => {
-                this.setState({post: data, loading: false})
+                this.setState({post: data, loading: false, like: data.isLiked, likesCount: data.likesCount})
             })
     }
 
-    handleDelete =  () =>{
-      postService.deletePost(this.params.userId,this.params.postId).then(data=>{
-          this.props.history.push(`/users/${this.params.userId}`);
-      }).catch(err=>{
-          goTo404();
-      })
+    handleDelete = () => {
+        postService.deletePost(this.params.userId, this.params.postId).then(data => {
+            this.props.history.push(`/users/${this.params.userId}`);
+        }).catch(err => {
+            goTo404();
+        })
     };
+
+    handleClickLike = () => {
+        postService.changeLikeStatus(this.state.post.id, !this.state.like).catch(err => {
+            // TODO - go to 404
+        })
+        if (this.state.like) {
+            this.setState({
+                likesCount: this.state.likesCount - 1,
+                like: !this.state.like,
+            });
+        } else {
+            this.setState({
+                likesCount: this.state.likesCount + 1,
+                like: !this.state.like,
+            });
+        }
+    }
 
     render() {
         const rendered = !this.state.loading ? <div className="post-item">
@@ -47,13 +68,21 @@ class Post extends React.Component {
                 </li>
                 <li><b>Last Updated: </b> {this.state.post.updatedAt}</li>
             </ul>
+            {authService.userLoggedIn() &&
+            <IconButton aria-label="like" onClick={this.handleClickLike}>
+                {!this.state.like ? <FavoriteBorderSharpIcon/> : <FavoriteSharpIcon color="secondary"/>}
+            </IconButton>
+            }
+            <span>Likes: {this.state.likesCount}</span>
+            <br/><br/>
             {this.canEdit() &&
             <Link to={`/users/${this.state.post.userId}/posts/${this.state.post.id}/edit`}>
                 <Button variant="contained"> Edit</Button>
             </Link>
             }
             {this.canEdit() &&
-                <Button id="delete-button" variant="contained" color="secondary" onClick={this.handleDelete}>Delete Post</Button>
+            <Button id="delete-button" variant="contained" color="secondary" onClick={this.handleDelete}>Delete
+                Post</Button>
             }
         </div> : '';
         return (rendered)
@@ -61,7 +90,7 @@ class Post extends React.Component {
     }
 
     canEdit() {
-        return authService.currentUser() && (authService.currentUser().id === this.state.post.userId);
+        return authService.userLoggedIn() && (authService.currentUser().id === this.state.post.userId);
     }
 }
 

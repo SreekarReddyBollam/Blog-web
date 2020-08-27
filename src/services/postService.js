@@ -66,6 +66,12 @@ class PostService {
         }
         return await response.json();
     }
+
+    async changeLikeStatus(id, statusLike) {
+        const _url = new UrlBuilder().addUsers(authService.currentUser().id)
+            .addPosts(id).addLikeStatus(statusLike).build();
+        return await this.requestServer(_url,'GET');
+    }
 }
 
 export const postService = new PostService();
