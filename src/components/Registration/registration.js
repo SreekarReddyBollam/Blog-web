@@ -44,7 +44,7 @@ class Registration extends React.Component {
                     profilePic: user.profilePic ? user.profilePic : '',
                 })
             }).catch(err=>{
-                // TODO - route to 404 page
+                this.props.histroy.push("/Oh404Page")
             })
         }
     }
@@ -114,10 +114,9 @@ class Registration extends React.Component {
             'last_name': this.state.lastName,
             'profile_pic': this.state.profilePic
         }).then(body => {
-            sessionStorage['user'] = JSON.stringify(body.user);
             this.props.history.push("/");
         }).catch(err => {
-            // TODO - go to 404 page
+            this.props.histroy.push("/Oh404Page")
         })
     }
 
@@ -125,7 +124,7 @@ class Registration extends React.Component {
         userService.deleteUser(authService.currentUser().id).then(body => {
             this.props.history.push("/");
         }).catch(err => {
-            // TODO - go to 404 page
+            this.props.histroy.push("/Oh404Page")
         });
     }
 

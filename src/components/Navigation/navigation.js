@@ -136,7 +136,4 @@ export default withRouter(Navigation);
 
 
 export function goTo404() {
-    return (
-        <Redirect to="/Oh404Page"/>
-    )
 }

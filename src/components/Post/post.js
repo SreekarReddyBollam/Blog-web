@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import {authService} from "../../services/authService";
 import {postService} from "../../services/postService";
 import './post.css'
-import {goTo404} from "../Navigation/navigation";
 import IconButton from "@material-ui/core/IconButton";
 import FavoriteBorderSharpIcon from '@material-ui/icons/FavoriteBorderSharp';
 import FavoriteSharpIcon from '@material-ui/icons/FavoriteSharp';
@@ -31,13 +30,13 @@ class Post extends React.Component {
         postService.deletePost(this.params.userId, this.params.postId).then(data => {
             this.props.history.push(`/users/${this.params.userId}`);
         }).catch(err => {
-            goTo404();
+            this.props.history.push("/Oh404Page")();
         })
     };
 
     handleClickLike = () => {
         postService.changeLikeStatus(this.state.post.id, !this.state.like).catch(err => {
-            // TODO - go to 404
+            this.props.history.push("/Oh404Page")()
         })
         if (this.state.like) {
             this.setState({

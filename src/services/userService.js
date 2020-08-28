@@ -22,23 +22,25 @@ class UserService {
     }
 
     async requestServer(data = null, _url, method) {
-        let options = {
-            method: method,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': authService.userLoggedIn() ? `HS256 ${authService.token()}` : ''
+        try{
+            let options = {
+                method: method,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': authService.userLoggedIn() ? `HS256 ${authService.token()}` : ''
+                }
             }
-        }
-        if(method!=='GET')
-            options.body =data ? JSON.stringify(data) : ''
+            if(method!=='GET')
+                options.body =data ? JSON.stringify(data) : ''
 
-        const response = await fetch(_url,options)
+            const response = await fetch(_url,options)
 
-        if(!response.ok){
-            return new Error("404 Error server might be down");
+            return await response.json();
         }
-        return await response.json();
+        catch (err){
+            throw new Error("Network error");
+        }
     }
 }
 

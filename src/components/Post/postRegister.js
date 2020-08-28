@@ -74,7 +74,7 @@ class PostRegister extends React.Component {
             }).then(data=>{
                 this.props.history.push(`/users/${params.userId}`);
             }).catch(err=>{
-                // TODO - route to 404 page
+                this.props.history.push("/Oh404Page")
             });
         } else if (this.props.mode === 'create') {
             postService.createPost(params.userId, {
@@ -84,7 +84,7 @@ class PostRegister extends React.Component {
             }).then(data=>{
                 this.props.history.push(`/users/${params.userId}`);
             }).catch(err=>{
-                // TODO - route to 404 page
+                this.props.history.push("/Oh404Page")
             });
         }
     }

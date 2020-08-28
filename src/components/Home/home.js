@@ -34,7 +34,7 @@ class Home extends React.Component {
                 posts:data
             });
         }).catch(err=>{
-            // TODO -- go to 404
+            this.props.history.push("/Oh404Page")
         })
 
     }

@@ -49,22 +49,25 @@ class PostService {
     }
 
     async requestServer(_url, method, body) {
-        let options = {
-            method: method,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `HS256 ${authService.token()}`
-            },
-        }
-        if(body)
-            options['body'] =JSON.stringify(formatConversion(body,camelToSnakeCase));
+        try{
+            let options = {
+                method: method,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `HS256 ${authService.token()}`
+                },
+            }
+            if(body)
+                options['body'] =JSON.stringify(formatConversion(body,camelToSnakeCase));
 
-        const response = await fetch(_url,options)
-        if(!response.ok){
-            throw new Error("404 page Server might be down");
+            const response = await fetch(_url,options)
+
+            return await response.json();
         }
-        return await response.json();
+        catch (err){
+            throw new Error("Network error");
+        }
     }
 
     async changeLikeStatus(id, statusLike) {
